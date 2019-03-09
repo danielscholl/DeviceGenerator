@@ -33,7 +33,6 @@ namespace DeviceGenerator
                     deviceList.Add(new Device(deviceId));                
                 }
 
-                await identityDb.AddDevices2Async(deviceList).ConfigureAwait(false);
                 Console.WriteLine($"Send Batch {m}: Completed");
             }
             Console.WriteLine($"Device Generation: {count * multiplier} Sent");
