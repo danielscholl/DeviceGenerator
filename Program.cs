@@ -12,15 +12,24 @@ namespace DeviceGenerator
     {
         static async Task Main()
         {
-            var builder = new ConfigurationBuilder()
+            var connectionString = Environment.GetEnvironmentVariable("HUB_CONNECTION_STRING");
+            int count = Convert.ToInt32(Environment.GetEnvironmentVariable("COUNT"), CultureInfo.CurrentCulture);
+            int multiplier = Convert.ToInt32(Environment.GetEnvironmentVariable("MULTIPLIER"), CultureInfo.CurrentCulture);
+            
+            if(String.IsNullOrWhiteSpace(connectionString)) 
+            {
+                Console.WriteLine("Looking for settings file");
+                var builder = new ConfigurationBuilder()
                     .SetBasePath(Directory.GetCurrentDirectory())
                     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
-            IConfigurationRoot configuration = builder.Build();
+                IConfigurationRoot configuration = builder.Build();
+                connectionString = configuration.GetConnectionString("Hub");
+                count = Convert.ToInt32(configuration.GetSection("DeviceCount").Value, CultureInfo.CurrentCulture);
+                multiplier = Convert.ToInt32(configuration.GetSection("Multiplier").Value, CultureInfo.CurrentCulture);
+            }
 
-            var count = Convert.ToInt32(configuration.GetSection("DeviceCount").Value, CultureInfo.CurrentCulture);
-            var multiplier = Convert.ToInt32(configuration.GetSection("Multiplier").Value, CultureInfo.CurrentCulture);
-            var identityDb = RegistryManager.CreateFromConnectionString(configuration.GetConnectionString("Hub"));
+            var identityDb = RegistryManager.CreateFromConnectionString(connectionString);
 
             for (int m = 1; m < multiplier + 1; m++)
             {

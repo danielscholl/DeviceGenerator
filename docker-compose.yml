@@ -1,0 +1,12 @@
+version: '3'
+services:
+  device:
+    build:
+      context: .
+    image: danielscholl/iot-device-generator
+    deploy:
+      replicas: 2
+    environment:
+      HUB_CONNECTION_STRING: $HUB_CONNECTION_STRING
+      COUNT: 100
+      MULTIPLIER: 100
